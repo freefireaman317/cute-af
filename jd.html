@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Shortie Challenge 💖</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Bubblegum+Sans&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Kalam', cursive;
+            background: linear-gradient(135deg, #ffb3d1 0%, #ffd1dc 50%, #ffb3d1 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .heart {
+            position: absolute;
+            color: rgba(255, 182, 193, 0.7);
+            font-size: 20px;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        .star {
+            position: absolute;
+            color: rgba(255, 215, 0, 0.6);
+            font-size: 16px;
+            animation: sparkle 4s ease-in-out infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 182, 193, 0.3);
+        }
+        
+        .header h1 {
+            font-family: 'Bubblegum Sans', cursive;
+            font-size: 3rem;
+            color: #d63384;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .header h2 {
+            font-size: 1.5rem;
+            color: #e91e63;
+            margin-bottom: 15px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 182, 193, 0.2);
+            backdrop-filter: blur(5px);
+        }
+        
+        .section h3 {
+            font-family: 'Bubblegum Sans', cursive;
+            font-size: 2rem;
+            color: #d63384;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .button-game {
+            text-align: center;
+            position: relative;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .floating-button {
+            position: absolute;
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-family: 'Bubblegum Sans', cursive;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 20, 147, 0.3);
+            z-index: 10;
+        }
+        
+        .floating-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 20, 147, 0.5);
+        }
+        
+        .roast-message {
+            font-size: 1.3rem;
+            color: #d63384;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .roast-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ff69b4;
+            animation: confetti-fall 3s linear infinite;
+        }
+        
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+        
+        .game-area {
+            position: relative;
+            height: 500px;
+            background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 3px solid #ff69b4;
+        }
+        
+        .player {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #ff69b4;
+            border-radius: 50%;
+            bottom: 20px;
+            left: 50px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .platform {
+            position: absolute;
+            background: #8B4513;
+            border-radius: 5px;
+            border: 2px solid #654321;
+        }
+        
+        .cookie-jar {
+            position: absolute;
+            top: 20px;
+            right: 50px;
+            width: 50px;
+            height: 50px;
+            background: #DAA520;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            animation: cookie-glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes cookie-glow {
+            0%, 100% { box-shadow: 0 0 5px #DAA520; }
+            50% { box-shadow: 0 0 20px #DAA520; }
+        }
+        
+        .game-instructions {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #d63384;
+            font-size: 1.1rem;
+        }
+        
+        .tribute-section {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            line-height: 1.8;
+            font-size: 1.2rem;
+            color: #8B008B;
+        }
+        
+        .tribute-section p {
+            margin-bottom: 20px;
+        }
+        
+        .footer {
+            background: rgba(255, 182, 193, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 30px;
+            overflow: hidden;
+        }
+        
+        .marquee {
+            font-family: 'Bubblegum Sans', cursive;
+            font-size: 1.5rem;
+            color: #d63384;
+            white-space: nowrap;
+            animation: scroll 15s linear infinite;
+        }
+        
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        .replay-button {
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-family: 'Bubblegum Sans', cursive;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .replay-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 20, 147, 0.4);
+        }
+        
+        .success-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+            color: #d63384;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+        }
+
+        .name-input-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffb3d1 0%, #ffd1dc 50%, #ffb3d1 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+
+        .name-input-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            border: 3px solid rgba(255, 182, 193, 0.5);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .name-input-card h2 {
+            font-family: 'Bubblegum Sans', cursive;
+            font-size: 2.5rem;
+            color: #d63384;
+            margin-bottom: 20px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .name-input-card p {
+            font-size: 1.2rem;
+            color: #8B008B;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .name-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            border: 3px solid #ff69b4;
+            border-radius: 15px;
+            text-align: center;
+            font-family: 'Kalam', cursive;
+            background: rgba(255, 182, 193, 0.1);
+            color: #d63384;
+            margin-bottom: 20px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .name-input:focus {
+            border-color: #ff1493;
+            box-shadow: 0 0 10px rgba(255, 20, 147, 0.3);
+            transform: scale(1.02);
+        }
+
+        .name-input::placeholder {
+            color: rgba(214, 51, 132, 0.7);
+        }
+
+        .start-button {
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.3rem;
+            font-family: 'Bubblegum Sans', cursive;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 20, 147, 0.3);
+        }
+
+        .start-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 20, 147, 0.5);
+        }
+
+        .start-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .header h2 { font-size: 1.2rem; }
+            .section h3 { font-size: 1.5rem; }
+            .container { padding: 10px; }
+            .section { padding: 20px; }
+            .game-area { height: 400px; }
+            .tribute-section { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="name-input-overlay" id="nameInputOverlay">
+        <div class="name-input-card">
+            <h2>Welcome! 👋</h2>
+            <p>This is a special tribute site for someone short and sweet! 💖</p>
+            <p>What's your name, fun-sized friend?</p>
+            <input type="text" class="name-input" id="nameInput" placeholder="Enter your name..." maxlength="20">
+            <br>
+            <button class="start-button" id="startButton" onclick="startChallenge()">Let's Begin! 🎉</button>
+        </div>
+    </div>
+
+    <div class="floating-hearts" id="floatingHearts"></div>
+    
+    <div class="container">
+        <header class="header">
+            <h1>The Shortie Challenge</h1>
+            <h2>Made for <span id="userName">you</span> — fun-sized, full-powered 💖</h2>
+        </header>
+        
+        <section class="section">
+            <h3>🎯 Can You Click It?</h3>
+            <div class="button-game" id="buttonGame">
+                <button class="floating-button" id="floatingButton">Catch Me If You Can! 😏</button>
+                <div class="roast-message" id="roastMessage"></div>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h3>🍪 Climb for the Cookie</h3>
+            <div class="game-instructions">
+                Use arrow keys or WASD to move, SPACEBAR to jump!
+            </div>
+            <div class="game-area" id="gameArea">
+                <div class="player" id="player">B</div>
+                <div class="cookie-jar" id="cookieJar">🍪</div>
+            </div>
+        </section>
+        
+        <section class="section tribute-section">
+            <h3>💬 A Message from Your Bestie</h3>
+            <p>
+                Meet <span id="userName2">this amazing person</span> — they might be adorably short, but their personality is absolutely MASSIVE! 
+                This tiny queen has mastered the art of being sassy, loud when excited, and somehow 
+                always winning arguments despite being fun-sized. It's honestly impressive. 🤏👑
+            </p>
+            <p>
+                They're the kind of friend who'll roast you mercilessly one minute and then defend you 
+                fiercely the next. Building this site was definitely harder than it is for them to 
+                reach the top shelf, but hey, that's what step stools are for, right? 😂
+            </p>
+            <p>
+                This tribute comes from someone who loves annoying you almost as much as they admire 
+                your giant heart packed into that pocket-sized frame. You're 90% cute, 10% tall, 
+                and 100% loved, <span id="userName3">friend</span>! 💖
+            </p>
+        </section>
+        
+        <footer class="footer">
+            <div class="marquee" id="marqueeText">
+                You: 90% cute. 10% tall. 100% loved. ✨ Short and sweet like a perfect cupcake! 🧁
+            </div>
+            <button class="replay-button" onclick="scrollToGame()">Wanna climb again? 🍪</button>
+        </footer>
+    </div>
+    
+    <div class="success-message" id="successMessage">
+        <h2>🎉 You did it, Smol Queen! 👑</h2>
+        <p>Victory never looked this short and sweet! 🍪💅</p>
+    </div>
+    
+    <script>
+        // Floating hearts and stars animation
+        function createFloatingElements() {
+            const heartsContainer = document.getElementById('floatingHearts');
+            const elements = ['💖', '💕', '✨', '⭐', '🌟', '💫'];
+            
+            for (let i = 0; i < 20; i++) {
+                const element = document.createElement('div');
+                element.className = Math.random() > 0.5 ? 'heart' : 'star';
+                element.innerHTML = elements[Math.floor(Math.random() * elements.length)];
+                element.style.left = Math.random() * 100 + '%';
+                element.style.top = Math.random() * 100 + '%';
+                element.style.animationDelay = Math.random() * 6 + 's';
+                heartsContainer.appendChild(element);
+            }
+        }
+        
+        // Floating button game
+        let missCount = 0;
+        let userName = '';
+        const roastMessages = [
+            "Almost there… need a ladder? 😏",
+            "{{name}}.exe can't reach 🤖",
+            "Try again, Tiny Titan! 💪",
+            "So close! Maybe try tippy-toes? 🦶",
+            "Oops! The button is too tall for you! 📏",
+            "Need a boost? I can get you a phone book! 📚",
+            "This is harder than reaching the top shelf! 🛒",
+            "Don't worry, good things come in small packages! 📦",
+            "Pocket-sized power activated! ⚡",
+            "Final attempt, fun-sized friend! 🎯"
+        ];
+        
+        const floatingButton = document.getElementById('floatingButton');
+        const roastMessage = document.getElementById('roastMessage');
+        const buttonGame = document.getElementById('buttonGame');
+        
+        function moveButton() {
+            const gameRect = buttonGame.getBoundingClientRect();
+            const maxX = gameRect.width - 200;
+            const maxY = gameRect.height - 100;
+            
+            const newX = Math.random() * maxX;
+            const newY = Math.random() * maxY;
+            
+            floatingButton.style.left = newX + 'px';
+            floatingButton.style.top = newY + 'px';
+        }
+        
+        function showRoast() {
+            let message = roastMessages[Math.min(missCount, roastMessages.length - 1)];
+            message = message.replace('{{name}}', userName);
+            roastMessage.textContent = message;
+            roastMessage.classList.add('show');
+            setTimeout(() => {
+                roastMessage.classList.remove('show');
+            }, 3000);
+        }
+        
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = ['#ff69b4', '#ff1493', '#ffd700', '#00fa9a'][Math.floor(Math.random() * 4)];
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
+        }
+        
+        floatingButton.addEventListener('mouseenter', () => {
+            if (missCount < 7) {
+                missCount++;
+                moveButton();
+                showRoast();
+            }
+        });
+        
+        floatingButton.addEventListener('click', () => {
+            if (missCount >= 7) {
+                createConfetti();
+                floatingButton.style.display = 'none';
+                roastMessage.textContent = "You did it, Smol Queen! 👑";
+                roastMessage.classList.add('show');
+            } else {
+                missCount++;
+                moveButton();
+                showRoast();
+            }
+        });
+        
+        // Platform game
+        const gameArea = document.getElementById('gameArea');
+        const player = document.getElementById('player');
+        const cookieJar = document.getElementById('cookieJar');
+        
+        let playerPos = { x: 50, y: 460 };
+        let isJumping = false;
+        let gameWon = false;
+        
+        // Name input functionality
+        function startChallenge() {
+            const nameInput = document.getElementById('nameInput');
+            const name = nameInput.value.trim();
+            
+            if (name.length < 2) {
+                nameInput.style.borderColor = '#ff4444';
+                nameInput.placeholder = 'Please enter a valid name!';
+                return;
+            }
+            
+            userName = name;
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('userName2').textContent = userName;
+            document.getElementById('userName3').textContent = userName;
+            document.getElementById('marqueeText').textContent = 
+                `${userName}: 90% cute. 10% tall. 100% loved. ✨ Short and sweet like a perfect cupcake! 🧁`;
+            
+            document.getElementById('nameInputOverlay').style.display = 'none';
+            document.getElementById('player').textContent = userName.charAt(0).toUpperCase();
+        }
+        
+        // Enable start button when name is entered
+        document.getElementById('nameInput').addEventListener('input', function() {
+            const startButton = document.getElementById('startButton');
+            if (this.value.trim().length >= 2) {
+                startButton.disabled = false;
+            } else {
+                startButton.disabled = true;
+            }
+        });
+        
+        // Allow enter key to start
+        document.getElementById('nameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startChallenge();
+            }
+        });
+        
+        // Create platforms
+        const platforms = [
+            { x: 0, y: 480, width: 150, height: 20 },
+            { x: 200, y: 400, width: 100, height: 20 },
+            { x: 350, y: 320, width: 100, height: 20 },
+            { x: 500, y: 240, width: 100, height: 20 },
+            { x: 300, y: 160, width: 100, height: 20 },
+            { x: 150, y: 80, width: 150, height: 20 }
+        ];
+        
+        platforms.forEach((platform, index) => {
+            const platformEl = document.createElement('div');
+            platformEl.className = 'platform';
+            platformEl.style.left = platform.x + 'px';
+            platformEl.style.top = platform.y + 'px';
+            platformEl.style.width = platform.width + 'px';
+            platformEl.style.height = platform.height + 'px';
+            gameArea.appendChild(platformEl);
+        });
+        
+        function updatePlayer() {
+            player.style.left = playerPos.x + 'px';
+            player.style.bottom = (500 - playerPos.y - 40) + 'px';
+            
+            // Check if player reached cookie
+            if (playerPos.x > 400 && playerPos.y < 100 && !gameWon) {
+                gameWon = true;
+                document.getElementById('successMessage').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('successMessage').style.display = 'none';
+                    gameWon = false;
+                }, 3000);
+            }
+        }
+        
+        function jump() {
+            if (!isJumping) {
+                isJumping = true;
+                const jumpHeight = 80;
+                const originalY = playerPos.y;
+                
+                // Jump up
+                const jumpUp = setInterval(() => {
+                    playerPos.y -= 4;
+                    updatePlayer();
+                    
+                    if (playerPos.y <= originalY - jumpHeight) {
+                        clearInterval(jumpUp);
+                        
+                        // Fall down
+                        const fallDown = setInterval(() => {
+                            playerPos.y += 4;
+                            
+                            // Check platform collision
+                            let onPlatform = false;
+                            platforms.forEach(platform => {
+                                if (playerPos.x + 20 > platform.x && 
+                                    playerPos.x < platform.x + platform.width &&
+                                    playerPos.y + 40 >= platform.y &&
+                                    playerPos.y + 40 <= platform.y + platform.height + 10) {
+                                    playerPos.y = platform.y - 40;
+                                    onPlatform = true;
+                                }
+                            });
+                            
+                            if (onPlatform || playerPos.y >= 460) {
+                                if (playerPos.y >= 460) playerPos.y = 460;
+                                clearInterval(fallDown);
+                                isJumping = false;
+                            }
+                            
+                            updatePlayer();
+                        }, 20);
+                    }
+                }, 20);
+            }
+        }
+        
+        // Game controls
+        document.addEventListener('keydown', (e) => {
+            if (gameWon) return;
+            
+            switch(e.key.toLowerCase()) {
+                case 'a':
+                case 'arrowleft':
+                    if (playerPos.x > 0) playerPos.x -= 10;
+                    break;
+                case 'd':
+                case 'arrowright':
+                    if (playerPos.x < 550) playerPos.x += 10;
+                    break;
+                case 'w':
+                case 'arrowup':
+                case ' ':
+                    e.preventDefault();
+                    jump();
+                    break;
+            }
+            updatePlayer();
+        });
+        
+        function scrollToGame() {
+            document.querySelector('.section:nth-child(3)').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Initialize
+        createFloatingElements();
+        moveButton();
+        updatePlayer();
+        
+        // Set initial button state
+        document.getElementById('startButton').disabled = true;
+    </script>
+</body>
+</html>
